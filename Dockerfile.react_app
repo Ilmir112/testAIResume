@@ -1,26 +1,38 @@
-
+# Используем официальный образ Node.js для сборки
 FROM node:18-alpine AS build
 
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
+# Копируем package.json и package-lock.json/yarn.lock для установки зависимостей
 COPY react_app/package*.json ./
+# или, если используете yarn:
+# COPY react_app/yarn.lock ./
 
 # Устанавливаем зависимости
 RUN npm install
+# или, если используете yarn:
+# RUN yarn install
 
 # Копируем весь исходный код
 COPY react_app/ .
 
 # Собираем React-приложение
 RUN npm run build
+# или, если используете yarn:
+# RUN yarn build
 
-# Устанавливаем глобально serve для обслуживания статических файлов
-RUN npm install -g serve
+# Используем легкий сервер для обслуживания статических файлов
+FROM nginx:alpine
+
+# Копируем собранное React-приложение в директорию nginx
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Копируем конфигурацию nginx (если нужно)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Открываем порт 80
 EXPOSE 80
 
-# Запускаем статический сервер на порту 80
-CMD ["serve", "-s", "build", "-l", "80"]
+# Запускаем nginx
+CMD ["nginx", "-g", "daemon off;"]
