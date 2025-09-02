@@ -1,0 +1,18 @@
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: Dockerfile.react_app
+    ports:
+      - "80:80"
+    restart: always
+
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"  # или "9999:9999", если хотите, чтобы контейнер слушал на 9999
+    restart: always
+    env_file:
+      - .env

@@ -1,0 +1,26 @@
+
+FROM node:18-alpine AS build
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем package.json и package-lock.json
+COPY react_app/package*.json ./
+
+# Устанавливаем зависимости
+RUN npm install
+
+# Копируем весь исходный код
+COPY react_app/ .
+
+# Собираем React-приложение
+RUN npm run build
+
+# Устанавливаем глобально serve для обслуживания статических файлов
+RUN npm install -g serve
+
+# Открываем порт 80
+EXPOSE 80
+
+# Запускаем статический сервер на порту 80
+CMD ["serve", "-s", "build", "-l", "80"]
