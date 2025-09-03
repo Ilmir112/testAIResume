@@ -52,7 +52,7 @@ function ResumesPage() {
 
     const handleAddResume = async () => {
         try {
-            const response = await fetch('/apiZ/resume/add_data', {
+            const response = await fetch('/api/resume/add_data', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

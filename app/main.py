@@ -59,6 +59,7 @@ app.include_router(router_users)
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:80",
     "http://176.109.106.199:80"
 ]
 

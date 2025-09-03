@@ -187,20 +187,6 @@ async def delete_resume(resume_id: int, user: Users = Depends(get_current_user))
     return {"status": "success", "detail": f"deleted row {result_count}"}
 
 
-@router.get("/get_all_by_user")
-async def get_resumes_all(user: Users = Depends(get_current_user)):
-    try:
-        result = await ResumesDAO.find_all(user_id=user.id)
-        if result:
-            return result
-        raise CannotFindResume
-
-    except SQLAlchemyError as e:
-        msg = f"Database Exception{e} "
-        logger.error(msg)
-    except Exception as e:
-        msg = f"Unexpected error: {str(e)}"
-        logger.error(msg)
 
 
 @router.get("/find_resume_by_id")
