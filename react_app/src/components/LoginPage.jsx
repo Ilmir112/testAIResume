@@ -1,9 +1,9 @@
-import { useState } from 'react';
-
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [hover, setHover] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -14,9 +14,7 @@ function LoginPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        // Сохраняем токен в localStorage
         localStorage.setItem('access_token', data.access_token);
-        // Перенаправляем на страницу с резюме
         window.location.href = '/resumes';
       } else {
         setError('Неверный логин или пароль');
@@ -25,7 +23,6 @@ function LoginPage() {
       setError('Ошибка сети');
     }
   };
-
 
   const styles = {
     container: {
@@ -72,10 +69,21 @@ function LoginPage() {
       marginTop: '10px',
       textAlign: 'center',
     },
+    registerLink: {
+      marginTop: '15px',
+      textAlign: 'center',
+      cursor: 'pointer',
+      color: '#4CAF50',
+      textDecoration: 'underline',
+      background: 'none',
+      border: 'none',
+      fontSize: '14px',
+    },
   };
 
-  // Для эффекта hover на кнопку
-  const [hover, setHover] = useState(false);
+  if (showRegister) {
+    return <RegisterPage onBack={() => setShowRegister(false)} />;
+  }
 
   return (
     <div style={styles.container}>
@@ -106,6 +114,13 @@ function LoginPage() {
         Войти
       </button>
       {error && <p style={styles.errorText}>{error}</p>}
+
+      <button
+        style={styles.registerLink}
+        onClick={() => setShowRegister(true)}
+      >
+        Зарегистрироваться
+      </button>
     </div>
   );
 }
