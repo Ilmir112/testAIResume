@@ -7,7 +7,7 @@ from app.api.resumes.models import ResumesHistory
 from app.api.resumes.schemas import SResumes
 from app.api.users.dependencies import get_current_user
 from app.api.users.models import Users
-from app.exceptions import CannotFindResume, ResumeStatusExistsException
+from app.exceptions import CannotFindResume, ResumeStatusExistsException, ResumeStatusExistsInBaseException
 from app.logger import logger
 
 router = APIRouter(prefix="/api/resume", tags=["Данные по резюме"])
@@ -119,8 +119,15 @@ async def improve_resume(resume_id: int, user: Users = Depends(get_current_user)
                     "status": status.HTTP_200_OK,
                     "detail": {"improved_content": new_resume_history.context},
                 }
-        raise ResumeStatusExistsException
-
+        raise ResumeStatusExistsInBaseException
+    except ResumeStatusExistsInBaseException as e:
+        msg = f"Database Exception {e}"
+        logger.error(
+            msg,
+            extra={"resume_id": id},
+            exc_info=True,
+        )
+        raise e
     except SQLAlchemyError as e:
         msg = f"Database Exception {e}"
         logger.error(
@@ -128,6 +135,7 @@ async def improve_resume(resume_id: int, user: Users = Depends(get_current_user)
             extra={"resume_id": id},
             exc_info=True,
         )
+
     except Exception as e:
         msg = f"Unexpected error: {str(e)}"
         logger.error(

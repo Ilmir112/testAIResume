@@ -18,6 +18,10 @@ class ResumeStatusExistsException(ResumeException):
     status_code = status.HTTP_404_NOT_FOUND
     detail = "Резюме на найдено"
 
+class ResumeStatusExistsInBaseException(ResumeException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = "Данное обновление уже есть в базе"
+
 
 class IncorectLoginOrPassword(ResumeException):
     status_code = status.HTTP_401_UNAUTHORIZED
